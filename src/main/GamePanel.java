@@ -42,38 +42,62 @@ public class GamePanel extends JPanel implements Runnable {     //Runnable allow
     }
 
     @Override
-    public void run() {     //Starting a thread calls the run method
+    //Below is the sleep method game loop
+//    public void run() {     //Starting a thread calls the run method
+//
+//        while(gameThread != null){      //As long as gameThread exists, repeat this process
+//
+//            double drawInterval = 1000000000/FPS;   //We draw the screen every 0.0167 seconds
+//            double nextDrawTime = System.nanoTime() + drawInterval;     //The current time + drawInterval to get when to draw screen next
+//
+//            long currentTime = System.nanoTime();       //Current system time in nanoseconds, nano is very precise
+//
+//            //1 UPDATE: update information such as character positions
+//            update();
+//
+//            //2 DRAW: draw the screen with the updated information
+//            repaint();      //How to call paintComponent method
+//
+//            //3 SLEEP: wait until next frame to draw
+//            try {
+//                double remainingTime = nextDrawTime - System.nanoTime();    //Return how much time remaining until next draw time
+//                remainingTime = remainingTime/1000000;      //convert remainingTime to milliseconds
+//
+//                if(remainingTime < 0){
+//                    remainingTime = 0;      //Make sure thread does not sleep if no time is left between frames
+//                }
+//
+//                Thread.sleep((long) remainingTime);
+//
+//                nextDrawTime += drawInterval;   //update nextDrawTime
+//
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//    }
+    //Below is the delta method game loop
+    public void run() {
 
-        while(gameThread != null){      //As long as gameThread exists, repeat this process
+        double drawInterval = 1000000000/FPS;
+        double delta = 0;
+        long lastTime = System.nanoTime();
+        long currentTime;
 
-            double drawInterval = 1000000000/FPS;   //We draw the screen every 0.0167 seconds
-            double nextDrawTime = System.nanoTime() + drawInterval;     //The current time + drawInterval to get when to draw screen next
+        while(gameThread != null){
 
-            long currentTime = System.nanoTime();       //Current system time in nanoseconds, nano is very precise
+            currentTime = System.nanoTime();
 
-            //1 UPDATE: update information such as character positions
-            update();
+            delta += (currentTime - lastTime) / drawInterval;
 
-            //2 DRAW: draw the screen with the updated information
-            repaint();      //How to call paintComponent method
+            lastTime = currentTime;
 
-            //3 SLEEP: wait until next frame to draw
-            try {
-                double remainingTime = nextDrawTime - System.nanoTime();    //Return how much time remaining until next draw time
-                remainingTime = remainingTime/1000000;      //convert remainingTime to milliseconds
-
-                if(remainingTime < 0){
-                    remainingTime = 0;      //Make sure thread does not sleep if no time is left between frames
-                }
-
-                Thread.sleep((long) remainingTime);
-
-                nextDrawTime += drawInterval;   //update nextDrawTime
-                
-            } catch (InterruptedException e) {
-                e.printStackTrace();
+            if(delta > 1){
+                update();
+                repaint();
+                delta--;
             }
-
         }
     }
     public void update(){
