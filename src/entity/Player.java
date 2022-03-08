@@ -20,6 +20,13 @@ public class Player extends Entity{
         this.keyH=keyH;
 
         setDefaultValues();
+        solidArea = new Rectangle();
+        solidArea.x = 8;
+        solidArea.y = 16;
+        solidArea.width = 32;
+        solidArea.height = 32;
+        solidAreaX = solidArea.x;
+        solidAreaY = solidArea.y;
     }
     public void setDefaultValues(){
 
@@ -50,19 +57,15 @@ public class Player extends Entity{
             //change player location
             if(keyH.upPressed){
                 direction = "up";
-                y -= speed;
             }
             else if(keyH.downPressed){
                 direction = "down";
-                y += speed;
             }
             else if(keyH.leftPressed){
                 direction = "left";
-                x -=speed;
             }
             else{
                 direction = "right";
-                x +=speed;
             }
 
             spriteCounter++;
@@ -75,7 +78,29 @@ public class Player extends Entity{
                 }
                 spriteCounter = 0;
             }
+            //Check tile collision
+            collisionOn = false;
+            gp.cChecker.checkTile(this);
+
+            //If collision is false, player can move
+            if(!collisionOn){
+                switch(direction){
+                    case "up":
+                        y -= speed;
+                        break;
+                    case "down":
+                        y += speed;
+                        break;
+                    case "left":
+                        x -=speed;
+                        break;
+                    case "right":
+                        x +=speed;
+                        break;
+                }
+            }
         }
+
 
     }
     public void draw(Graphics2D g2){
